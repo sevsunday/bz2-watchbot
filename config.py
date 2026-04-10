@@ -17,16 +17,21 @@ def validate_webhook_configs() -> Dict[str, WebhookConfig]:
     Validates webhook configurations and returns only valid ones.
     A valid webhook must have a non-empty URL from environment variables.
     """
+
     raw_configs = {
         "VSRCORD": WebhookConfig(
-            url=os.getenv('VSRCORD_WEBHOOK_URL'),
-            notification_tag="<@&1137622254621032500>"  # ID for @BZ2Player
-            # notification_tag=""  # ID for @BZ2Player
+            url=os.getenv('DISCORD_WEBHOOK_URL'),
+            notification_tag=""
         ),
-        "GREENCORD": WebhookConfig(
-            url=os.getenv('GREENCORD_WEBHOOK_URL'),
-            notification_tag=""  # no role ping for greencord 
-        ),
+        #"GREENCORD": WebhookConfig(
+        #    url=os.getenv('GREENCORD_WEBHOOK_URL'),
+        #    notification_tag=""  # no role ping for greencord
+        #),
+        # "SEVCORD": WebhookConfig(
+        #    url=os.getenv('DISCORD_WEBHOOK_URL'),
+        #     notification_tag=""  # ID for @BZ2Player
+        #)
+
         # "STRATCORD": WebhookConfig(
         #     url=os.getenv('STRATCORD_WEBHOOK_URL'),
         #     notification_tag="<@&1119505038058991667>"  # ID for @BZ2Player
@@ -82,9 +87,9 @@ MONITORED_STEAM_IDS = [
     "76561198820311491",  # m.s 
     "76561198026325621",  # F9Bomber
     "76561199653748651",  # Sev
-    "76561198825563594",  # Maverick
+    # "76561198825563594",  # Maverick
     "76561198045619216",  # Zack
-    # "76561198043392032",  # blue_banana
+    "76561198043392032",  # blue_banana
     # "76561197974548434",  # VTrider
     # "76561198068133931",  # Econchump
     # "76561198825004088",  # Lamper
