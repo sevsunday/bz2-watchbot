@@ -938,8 +938,8 @@ async def main():
         startup_message = {
             "username": "BZ2 WatchBot",
             "embeds": [{
-                "title": "Hey there, BZ2 WatchBot here! 👋",
-                "description": "I'm now watching for BZ2 games and will role-ping when I detect relevant sessions. For a game to be posted here, the host must be in my pre-configured host list.\n\nEach game within a session gets its own Discord embed, which is updated in real-time.\n\nIf you are a regular game host and do NOT want a game of yours to show up here, use 'test' for your game name.",
+                "title": "The WatchBot has been restarted.",
+                "description": "I'm now watching for BZCC games and will post when I detect relevant sessions. For a game to be posted here, the host must be in my pre-configured host list.\n\nEach game within a session gets its own Discord embed, which is updated in real-time.\n\nIf you are a regular game host and do NOT want a game of yours to show up here, use 'test' for your game name.",
                 "color": 3066993  # Discord green color
             }]
         }
