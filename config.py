@@ -100,7 +100,7 @@ MONITORED_STEAM_IDS = [
     # "76561198088149233",  # Muffin
     # "76561198064801924",  # HappyOtter
     # "76561197970538803",  # Graves
-    # "76561198345909972",  # Vivify
+    "76561198345909972",  # Vivify
 ]
 
 CHECK_INTERVAL = 30 # seconds 
