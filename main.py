@@ -8,6 +8,7 @@ import config
 import sys
 import time
 import os
+import re
 
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -65,6 +66,61 @@ def setup_logging():
     return logger
 
 logger = setup_logging()
+
+STEAM_JOIN_BASE = "steam://rungame/624970/76561198955218468/-connect-mp%20"
+
+
+def clean_join_text(value):
+    """Match Game Watch site clean(): strip HTML, collapse whitespace."""
+    if value is None:
+        return "Undefined"
+    stripped = re.sub(r"<[^>]*>", "", str(value))
+    cleaned = re.sub(r"\s+", " ", stripped).strip()
+    if cleaned == "":
+        return "Invalid Input"
+    return cleaned
+
+
+def string_to_hex(text):
+    return "".join(f"{ord(char):02x}" for char in text)
+
+
+def build_steam_join_url(session):
+    """Build a steam://rungame join URL from session name, mods, and raw NAT."""
+    name = session.get("Name")
+    name_len = str(len(name)) if name else "0"
+
+    game_data = session.get("Game") or {}
+    game_mod = game_data.get("Mod")
+    extra_mods = game_data.get("Mods")
+    if extra_mods is not None:
+        extra = ";".join(str(mod) for mod in extra_mods)
+        mod_prefix = str(game_mod) if game_mod is not None else "undefined"
+        mod_list = f"{mod_prefix};{extra}"
+    elif game_mod is not None:
+        mod_list = str(game_mod)
+    else:
+        mod_list = None
+
+    if mod_list:
+        mod_list_len = str(len(mod_list))
+        mod_list_value = mod_list
+    else:
+        mod_list_len = "0"
+        mod_list_value = ""
+
+    nat = (session.get("Address") or {}).get("NAT") or ""
+    plain_args = ",".join([
+        "N",
+        name_len,
+        clean_join_text(name),
+        mod_list_len,
+        mod_list_value,
+        nat,
+        "0",
+    ]) + ","
+    return STEAM_JOIN_BASE + string_to_hex(plain_args)
+
 
 class BZBot:
     def __init__(self):
@@ -247,9 +303,9 @@ class BZBot:
             else:
                 mod_field = f"{mod_name}\n{game_version}"
 
-            nat_id = session.get('Address', {}).get('NAT', '')
-            formatted_nat = nat_id.replace('@', 'A').replace('-', '0').replace('_', 'L')
-            join_url = f"https://join.bz2vsr.com/{formatted_nat}"
+            steam_join_url = build_steam_join_url(session)
+            encoded_args = steam_join_url.split("-connect-mp%20", 1)[-1]
+            join_url = f"https://battlezonescrapfield.github.io/BZCC-Website/?join={encoded_args}"
 
             embed = {
                 "title": "▶️  Join Game",
@@ -263,7 +319,7 @@ class BZBot:
 
             # Add "View in Browser" link at the top
             embed["fields"].extend([
-                {"name": "", "value": "[View in Browser](https://bz2vsr.com/)", "inline": False},
+                {"name": "", "value": "[View in Browser](https://battlezonescrapfield.github.io/BZCC-Website/)", "inline": False},
             ])
 
             embed["fields"].extend([
@@ -396,7 +452,7 @@ class BZBot:
                     map_details += f"\nAuthor: {author}"
             
             embed["fields"].extend([
-                {"name": "🗺️  Map Details", "value": f"[Browse Maps](https://bz2vsr.com/maps/?map={clean_map_file})\n```{map_details}```", "inline": False},
+                {"name": "🗺️  Map Details", "value": f"[Browse Maps](https://vtstats.bz/map) | [View Map](https://vtstats.bz/map/{clean_map_file}/)\n```{map_details}```", "inline": False},
             ])
 
             embed["fields"].extend([
@@ -490,7 +546,9 @@ class BZBot:
                                 self.message_ids[webhook_id][session_id] = response_data['id']
                                 logger.info(f"Created new message for session {session_id} in webhook {webhook_id}")
                             else:
+                                error_body = await response.text()
                                 logger.error(f"Error creating message in webhook {webhook_id}: {response.status}")
+                                logger.error(f"Webhook error body: {error_body}")
                 except Exception as e:
                     logger.error(f"Error processing webhook {webhook_id}: {str(e)}")
                     continue  # Continue with next webhook if one fails
