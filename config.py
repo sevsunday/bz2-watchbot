@@ -105,6 +105,7 @@ MONITORED_STEAM_IDS = [
     "76561198345909972",  # Vivify
     "76561198136459671",  # Darkvale
     "76561198025032941",  # Cloaket
+    "76561198048896649",  # DraconisMarch
 
 ]
 
