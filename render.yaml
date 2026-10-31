@@ -11,5 +11,3 @@ services:
         sync: false
       - key: CHECK_INTERVAL
         value: 30
-      - key: MONITORED_STEAM_IDS
-        sync: false 

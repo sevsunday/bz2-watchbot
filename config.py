@@ -109,4 +109,8 @@ MONITORED_STEAM_IDS = [
 
 ]
 
-CHECK_INTERVAL = 30 # seconds 
+CHECK_INTERVAL = int(os.getenv('CHECK_INTERVAL', '30')) # seconds
+
+# A session is marked ended only after it is missing from this many consecutive polls
+SESSION_END_GRACE_POLLS = 2
+
