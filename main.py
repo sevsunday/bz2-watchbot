@@ -344,25 +344,25 @@ class BZBot:
 
             # Add "View in Browser" link at the top
             embed["fields"].extend([
-                {"name": "", "value": "[View in Browser](https://battlezonescrapfield.github.io/BZCC-Website/)", "inline": False},
+                {"name": "", "value": "[View in Browser](https://vtstats.bz/gw/)\nTrouble joining? [How to switch game versions](https://vtstats.bz/beta)", "inline": False},
             ])
 
             embed["fields"].extend([
-                {"name": "🎮  Game Name", "value": f"```{session.get('Name', 'Unnamed')}```", "inline": True},
-                {"name": "👤  Host", "value": f"```{host_name}```", "inline": True},
+                {"name": "Game Name", "value": f"```{session.get('Name', 'Unnamed')}```", "inline": True},
+                {"name": "Host", "value": f"```{host_name}```", "inline": True},
                 {"name": "\u200b", "value": "\u200b", "inline": True},
-                {"name": "👥  Players", "value": f"```{player_count}/{max_players}```", "inline": True},
-                {"name": "📊  Status", "value": f"```{status}```", "inline": True},
+                {"name": "Players", "value": f"```{player_count}/{max_players}```", "inline": True},
+                {"name": "Status", "value": f"```{status}```", "inline": True},
                 {"name": "\u200b", "value": "\u200b", "inline": True},
-                {"name": "🎲  Mode", "value": f"```{game_mode}```", "inline": True},
-                {"name": "🌐  NAT Type", "value": f"```{nat_type}```", "inline": True},
+                {"name": "Mode", "value": f"```{game_mode}```", "inline": True},
+                {"name": "NAT Type", "value": f"```{nat_type}```", "inline": True},
                 {"name": "\u200b", "value": "\u200b", "inline": True},
             ])
 
             is_locked = session.get('Status', {}).get('IsLocked', False)
             if is_locked:
                 embed["fields"].extend([
-                    {"name": "🔒  Locked", "value": "```ansi\n\u001b[31mYes\u001b[0m```", "inline": True},
+                    {"name": "Locked", "value": "```ansi\n\u001b[31mYes\u001b[0m```", "inline": True},
                     {"name": "\u200b", "value": "\u200b", "inline": True},
                     {"name": "\u200b", "value": "\u200b", "inline": True},
                 ])
@@ -376,7 +376,8 @@ class BZBot:
                 if team_id not in teams:
                     teams[team_id] = []
                 
-                prefix = "C: " if team_data.get('Leader') is True else ""
+                is_leader = team_data.get('Leader') is True
+                prefix = "C: " if is_leader else ""
                 player_name = f"{prefix}{format_label(player_label(player, api_response))}"
                 
                 kills = player.get('Stats', {}).get('Kills', 0)
@@ -384,7 +385,9 @@ class BZBot:
                 score = player.get('Stats', {}).get('Score', 0)
                 
                 player_with_stats = f"{player_name} ({kills}/{deaths}/{score})"
-                teams[team_id].append(player_with_stats)
+                teams[team_id].append((is_leader, player_with_stats))
+
+            teams = {tid: [p for _, p in sorted(entries, key=lambda e: not e[0])] for tid, entries in teams.items()}
 
             is_mpi = game_mode == "MPI"
             is_strat = game_mode == "STRAT"
@@ -426,31 +429,12 @@ class BZBot:
             if clean_map_file.endswith('25'):
                 clean_map_file = clean_map_file[:-2]
             
-            map_details = f"Name: {map_name}\n"
-            map_details += f"File: {clean_map_file}\n"
-            
-            if map_file:
-                vsr_map = next((m for m in self.vsr_maps if m.get('File', '').lower() == clean_map_file.lower()), None)
-                
-                if vsr_map:
-                    pools = vsr_map.get('Pools', 'Unknown')
-                    loose = vsr_map.get('Loose', 'Unknown')
-                    b2b = vsr_map.get('Size', {}).get('baseToBase', 'Unknown')
-                    size = vsr_map.get('Size', {}).get('formattedSize', 'Unknown')
-                    author = vsr_map.get('Author', 'Unknown')
-                    
-                    map_details += f"\nPools: {pools}"
-                    map_details += f"\nLoose: {loose}"
-                    map_details += f"\nB2B Distance (m): {b2b}"
-                    map_details += f"\nSize (m): {size}"
-                    map_details += f"\nAuthor: {author}"
-            
             embed["fields"].extend([
-                {"name": "🗺️  Map Details", "value": f"[Browse Maps](https://vtstats.bz/map) | [View Map](https://vtstats.bz/map/{clean_map_file}/)\n```{map_details}```", "inline": False},
+                {"name": "Map Details", "value": f"{map_name} ({clean_map_file})\n[View Map Details](https://vtstats.bz/map/{clean_map_file}/) | [Browse All Maps](https://vtstats.bz/map)", "inline": False},
             ])
 
             embed["fields"].extend([
-                {"name": "", "value": mod_field, "inline": True}
+                {"name": "Game Mod/Version", "value": mod_field, "inline": True}
             ])
 
             map_image = level.get('Image')

@@ -9,5 +9,7 @@ services:
         value: production
       - key: DISCORD_WEBHOOK_URL
         sync: false
+      - key: GREENCORD_WEBHOOK_URL
+        sync: false
       - key: CHECK_INTERVAL
         value: 30

@@ -23,10 +23,10 @@ def validate_webhook_configs() -> Dict[str, WebhookConfig]:
             url=os.getenv('DISCORD_WEBHOOK_URL'),
             notification_tag=""
         ),
-        #"GREENCORD": WebhookConfig(
-        #    url=os.getenv('GREENCORD_WEBHOOK_URL'),
-        #    notification_tag=""  # no role ping for greencord
-        #),
+        "GREENCORD": WebhookConfig(
+            url=os.getenv('GREENCORD_WEBHOOK_URL'),
+            notification_tag=""  # no role ping for greencord
+        ),
         # "SEVCORD": WebhookConfig(
         #    url=os.getenv('DISCORD_WEBHOOK_URL'),
         #     notification_tag=""  # ID for @BZ2Player
