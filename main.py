@@ -67,6 +67,7 @@ logger = logging.getLogger('bzbot')
 
 STEAM_JOIN_BASE = "steam://rungame/624970/76561198955218468/-connect-mp%20"
 STEAM_PROFILE_BASE = "https://steamcommunity.com/profiles/"
+VSR_SITE_BASE = "https://vsr.bz"
 STOCK_MOD_ID = "0"
 SUPPRESS_EMBEDS = 1 << 2
 DISCORD_CONTENT_LIMIT = 2000
@@ -344,7 +345,7 @@ class BZBot:
 
             # Add "View in Browser" link at the top
             embed["fields"].extend([
-                {"name": "", "value": "[View in Browser](https://vtstats.bz/gw/)\nTrouble joining? [How to switch game versions](https://vtstats.bz/beta)", "inline": False},
+                {"name": "", "value": f"[View in Browser]({VSR_SITE_BASE}/gw/)\nTrouble joining? [How to switch game versions]({VSR_SITE_BASE}/beta)", "inline": False},
             ])
 
             embed["fields"].extend([
@@ -430,7 +431,7 @@ class BZBot:
                 clean_map_file = clean_map_file[:-2]
             
             embed["fields"].extend([
-                {"name": "Map Details", "value": f"{map_name} ({clean_map_file})\n[View Map Details](https://vtstats.bz/map/{clean_map_file}/) | [Browse All Maps](https://vtstats.bz/map)", "inline": False},
+                {"name": "Map Details", "value": f"{map_name} ({clean_map_file})\n[View Map Details]({VSR_SITE_BASE}/map/{clean_map_file}/) | [Browse All Maps]({VSR_SITE_BASE}/map)", "inline": False},
             ])
 
             embed["fields"].extend([
